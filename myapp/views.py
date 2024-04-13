@@ -34,6 +34,12 @@ def tasks(request):
     #task =  Task.objects.get(id=id)
     #task = get_object_or_404(Task, id=id)
     tasks = list(Task.objects.values())
+    
+    # find the project name for each task
+    for task in tasks:
+        project = Project.objects.get(id=task['project_id'])
+        task['project_name'] = project.name
+
     return render(request, 'tasks.html', {
         'tasks': tasks
     })
@@ -47,11 +53,10 @@ def create_task(request):
     elif request.method == 'POST':
         title = request.POST['title']
         description = request.POST['description']
-        
-        print(title)
-        print(description)
+        project_id = request.POST['project']
+
         Task.objects.create(title=title, description=description, 
-                            project_id=2)
+                            project_id=project_id)
         return redirect('tasks')
 
 def create_project(request):
